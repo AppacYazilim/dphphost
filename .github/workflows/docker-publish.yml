@@ -37,7 +37,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ env.BRANCH_NAME }}-amd64, ghcr.io/${{ github.repository }}:${{ env.BRANCH_NAME }}-arm64
+          tags: ghcr.io/${{ github.repository }}:${{ env.BRANCH_NAME }}
           platforms: linux/amd64, linux/arm64
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
