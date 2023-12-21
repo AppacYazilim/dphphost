@@ -1,5 +1,5 @@
 FROM php:8.2.9-apache
-LABEL org.opencontainers.image.source https://github.com/AppacYazilim/dphphost
+LABEL org.opencontainers.image.source = https://github.com/AppacYazilim/dphphost
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
