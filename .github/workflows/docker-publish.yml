@@ -27,10 +27,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')" >> $GITHUB_ENV
-
       - name: Lowercase repository name
         run: echo "REPOSITORY_NAME=$(echo ${{ github.repository }} | awk '{print tolower($0)}')" >> $GITHUB_ENV
 
@@ -41,6 +37,7 @@ jobs:
           images: ghcr.io/${{ env.REPOSITORY_NAME }}
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -76,10 +73,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')" >> $GITHUB_ENV
-
       - name: Lowercase repository name
         run: echo "REPOSITORY_NAME=$(echo ${{ github.repository }} | awk '{print tolower($0)}')" >> $GITHUB_ENV
 
@@ -100,7 +93,7 @@ jobs:
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf 'ghcr.io/${{ env.REPOSITORY_NAME }}:${{ env.BRANCH_NAME }}@sha256:%s ' *)
+            $(printf 'ghcr.io/${{ env.REPOSITORY_NAME }}@sha256:%s ' *)
       - name: Inspect image
         run: |
           docker buildx imagetools inspect ghcr.io/${{ env.REPOSITORY_NAME }}:${{ steps.meta.outputs.version }}
