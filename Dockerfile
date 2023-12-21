@@ -1,5 +1,5 @@
-FROM php:apache
-LABEL org.opencontainers.image.source https://github.com/AppacYazilim/dphphost
+FROM php:8.2.13-apache
+LABEL org.opencontainers.image.source = https://github.com/AppacYazilim/dphphost
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
@@ -44,3 +44,4 @@ ENV LC_ALL en_US.UTF-8
 
 RUN wget -O /root/browsercap.ini http://browscap.org/stream?q=PHP_BrowsCapINI
 # RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+CMD ["/usr/sbin/apache2ctl", "-DFOREGROUND"]
