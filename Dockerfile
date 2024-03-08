@@ -1,4 +1,4 @@
-FROM php:8.2.13-apache
+FROM php:8.1.27-apache
 LABEL org.opencontainers.image.source = https://github.com/AppacYazilim/dphphost
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
@@ -32,6 +32,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     sockets \
     pcntl \
     mongodb \
+    redis \
     && a2enmod rewrite
 
 COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
