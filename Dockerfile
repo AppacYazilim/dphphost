@@ -1,5 +1,5 @@
-FROM php:apache
-LABEL org.opencontainers.image.source https://github.com/AppacYazilim/dphphost
+FROM php:8.1.27-apache
+LABEL org.opencontainers.image.source = https://github.com/AppacYazilim/dphphost
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
@@ -32,6 +32,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     sockets \
     pcntl \
     mongodb \
+    redis \
     && a2enmod rewrite
 
 COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
@@ -44,3 +45,4 @@ ENV LC_ALL en_US.UTF-8
 
 RUN wget -O /root/browsercap.ini http://browscap.org/stream?q=PHP_BrowsCapINI
 # RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+CMD ["/usr/sbin/apache2ctl", "-DFOREGROUND"]
