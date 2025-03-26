@@ -32,6 +32,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     sockets \
     pcntl \
     mongodb \
+    redis \
     && a2enmod rewrite
 
 COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
