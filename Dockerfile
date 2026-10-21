@@ -8,12 +8,14 @@ HEALTHCHECK --interval=10s --timeout=4s --start-period=5s \
 
 RUN chmod uga+x /usr/local/bin/install-php-extensions && sync
 
+# Pin Imagick 3.8.1 to its upstream commit; avoid the unreliable PECL archive endpoint.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y wget locales \
     curl \
     git \
     zip unzip \
-    && install-php-extensions \
+    && for attempt in 1 2 3; do \
+    install-php-extensions \
     bcmath \
     bz2 \
     calendar \
@@ -28,11 +30,14 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     soap \
     xsl \
     zip \
-    imagick \
+    Imagick/imagick@70087bab33eab913e99ac77d64d04d1a2fd0b7b0 \
     sockets \
     pcntl \
     mongodb \
-    redis \
+    redis && break; \
+    test "$attempt" -lt 3 || exit 1; \
+    sleep 5; \
+    done \
     && a2enmod rewrite
 
 COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
