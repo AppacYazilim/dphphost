@@ -8,7 +8,7 @@ HEALTHCHECK --interval=10s --timeout=4s --start-period=5s \
 
 RUN chmod uga+x /usr/local/bin/install-php-extensions && sync
 
-# Pin Imagick 3.8.1 to its upstream commit; avoid the unreliable PECL archive endpoint.
+# Pin Imagick 3.8.1 to its upstream commit; avoid the unreliable PECL archive.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y wget locales \
     curl \
@@ -33,12 +33,18 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     Imagick/imagick@70087bab33eab913e99ac77d64d04d1a2fd0b7b0 \
     sockets \
     pcntl \
-    mongodb \
-    redis && break; \
+    mongodb && break; \
     test "$attempt" -lt 3 || exit 1; \
     sleep 5; \
     done \
     && a2enmod rewrite
+
+# Redis release archives omit liblzf; include the pinned submodule from upstream.
+RUN git clone --branch 6.3.0 --depth 1 --recurse-submodules --shallow-submodules \
+        https://github.com/phpredis/phpredis.git /tmp/phpredis \
+    && test "$(git -C /tmp/phpredis rev-parse HEAD)" = df4fab2de7fc327c54c94a13af2b9542e4fbd720 \
+    && install-php-extensions /tmp/phpredis \
+    && rm -rf /tmp/phpredis
 
 COPY custom.ini /usr/local/etc/php/conf.d/custom.ini
 COPY locales.gen /etc/locale.gen
