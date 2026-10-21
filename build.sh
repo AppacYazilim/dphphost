@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
-docker build . -t ghcr.io/appacyazilim/dphphost:php8
-docker push ghcr.io/appacyazilim/dphphost:php8
+docker build . -t ghcr.io/appacyazilim/dphphost:php82
+docker push ghcr.io/appacyazilim/dphphost:php82
